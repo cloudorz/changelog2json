@@ -1,0 +1,78 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.1.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: ec8dff9d876eaa919bdb7413489b1dee11ec69501d530526949a80ef0bb9b178
+
+name:           changelog2json
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/cloudorz/changelog2json#readme>
+homepage:       https://github.com/cloudorz/changelog2json#readme
+bug-reports:    https://github.com/cloudorz/changelog2json/issues
+author:         Cloud
+maintainer:     cloudcry@gmail.com
+copyright:      @cloud
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/cloudorz/changelog2json
+
+library
+  exposed-modules:
+      Lib
+      Parser
+      Types
+  other-modules:
+      Paths_changelog2json
+  hs-source-dirs:
+      src
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , megaparsec
+    , parser-combinators
+    , time
+  default-language: Haskell2010
+
+executable changelog2json-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_changelog2json
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , changelog2json
+    , megaparsec
+    , parser-combinators
+    , time
+  default-language: Haskell2010
+
+test-suite changelog2json-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      ParserSpec
+      Paths_changelog2json
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , changelog2json
+    , hspec
+    , megaparsec
+    , parser-combinators
+    , time
+  default-language: Haskell2010
