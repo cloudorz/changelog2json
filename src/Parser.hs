@@ -15,6 +15,9 @@ type Parser = Parsec Void String
 sc :: Parser ()
 sc = L.space space1 empty empty
 
+lexeme :: Parser a -> Parser a
+lexeme = L.lexeme sc
+
 symbol :: String -> Parser String
 symbol = L.symbol sc
 
@@ -37,5 +40,5 @@ sectionPrefix :: Parser ()
 sectionPrefix = void $ symbol "### "
 
 parseChangelogName :: Parser String
-parseChangelogName = namePrefix *> contentTill eol
+parseChangelogName = lexeme $ namePrefix *> contentTill eol
 
