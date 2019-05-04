@@ -1,6 +1,9 @@
-module Parser where
+module Parser (
+    parseChangelogName
+  ) where
 
 import Data.Void
+import Control.Monad (void)
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
@@ -24,5 +27,15 @@ brackets  = between (symbol "[") (symbol "]")
 contentTill :: Parser a ->  Parser String
 contentTill = manyTill printChar
 
+namePrefix :: Parser ()
+namePrefix = void $ symbol "# "
+
+versionPrefix :: Parser ()
+versionPrefix = void $ symbol "## "
+
+sectionPrefix :: Parser ()
+sectionPrefix = void $ symbol "### "
+
 parseChangelogName :: Parser String
-parseChangelogName = symbol "# " *> contentTill eol
+parseChangelogName = namePrefix *> contentTill eol
+
