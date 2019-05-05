@@ -7,7 +7,7 @@ data Section = Section
   , changes :: [String]
   } deriving (Show)
                          
-data Version = Version 
+data Version = Unreleased | Version 
   { version :: String
   , date :: UTCTime
   , desc :: String
