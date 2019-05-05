@@ -1,5 +1,6 @@
 module Parser (
-    parseChangelogName
+    changelogName
+  , changelogDesc
   ) where
 
 import Data.Void
@@ -39,6 +40,9 @@ versionPrefix = void $ symbol "## "
 sectionPrefix :: Parser ()
 sectionPrefix = void $ symbol "### "
 
-parseChangelogName :: Parser String
-parseChangelogName = lexeme $ namePrefix *> contentTill eol
+changelogName :: Parser String
+changelogName = lexeme $ namePrefix *> contentTill eol
+
+changelogDesc :: Parser String
+changelogDesc = lexeme $ manyTill (choice [printChar, newline]) (lookAhead versionPrefix)
 
