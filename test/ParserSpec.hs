@@ -2,6 +2,7 @@ module ParserSpec where
 
 import Test.Hspec
 import Parser
+import Types
 import Text.Megaparsec
 import Text.Megaparsec.Char
 
@@ -32,5 +33,9 @@ spec = do
               "All 哈 \n ## "
               `shouldBe`
               return "## "
-
-
+      it "parse '## [Unreleased]'" $ do
+        parse unreleasedVersion 
+              "(undefined)"
+              "## [Unreleased]  "
+              `shouldBe`
+              return Unreleased
