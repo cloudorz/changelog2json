@@ -1,7 +1,7 @@
-module Parser (
-    changelogName
-  , changelogDesc
-  ) where
+module Parser ( changelogName
+              , changelogDesc
+              , unreleasedVersion
+              ) where
 
 import Data.Void
 import Control.Monad (void)
@@ -45,4 +45,7 @@ changelogName = lexeme $ namePrefix *> contentTill eol
 
 changelogDesc :: Parser String
 changelogDesc = lexeme $ manyTill (choice [printChar, newline]) (lookAhead versionPrefix)
+
+unreleasedVersion :: Parser Version
+unreleasedVersion = versionPrefix *> brackets (symbol "Unreleased") *> return Unreleased
 
