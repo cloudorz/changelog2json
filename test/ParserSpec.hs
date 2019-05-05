@@ -10,7 +10,27 @@ spec = do
   describe "Changelog Parser" $ do 
     describe "parse changelog Name/Title " $ do 
       it "parse \"# hello, 你好\n\"" $ do
-        parse parseChangelogName "(undefined)" "# hello, 你好\n" `shouldBe` return "hello, 你好"
+        parse changelogName 
+              "(undefined)" "# hello, 你好\n" 
+              `shouldBe` 
+              return "hello, 你好"
       it "consume space followed by" $ do
-        parse (parseChangelogName *> char 'k') "(undefined)" "# hello, 你好\n   k" `shouldBe` return 'k'
+        parse (changelogName *> char 'k') 
+              "(undefined)" "# hello, 你好\n   k"
+              `shouldBe` 
+              return 'k'
+    describe "parse changelog description " $ do 
+      it "parse 'All notable changes is based \n\n second line \n 第三行 ## '" $ do 
+        parse changelogDesc 
+              "(undefined)" 
+              "All notable changes is based \n\n second line \n 第三行 ## " 
+              `shouldBe` 
+              return "All notable changes is based \n\n second line \n 第三行 "
+      it "not consume after ## " $ do 
+        parse (changelogDesc *> string "## ") 
+              "(undefined)" 
+              "All 哈 \n ## "
+              `shouldBe`
+              return "## "
+
 
