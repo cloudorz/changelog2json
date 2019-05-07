@@ -2,6 +2,7 @@ module Parser ( changelogName
               , changelogDesc
               , unreleasedVersion
               , diffRecord
+              , changesEntry
               ) where
 
 import Data.Void
@@ -58,3 +59,5 @@ diffRecord = Diff <$> version <*> content
   where version = brackets (many (alphaNumChar <|> char '.')) <* symbol ":"
         content = contentTill (void eol <|> eof)
 
+changesEntry :: Parser String
+changesEntry = symbol "-" *> contentTill (void eol <|> eof)
