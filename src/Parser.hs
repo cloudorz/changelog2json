@@ -1,6 +1,7 @@
 module Parser ( changelogName
               , changelogDesc
               , unreleasedVersion
+              , diffRecord
               ) where
 
 import Data.Void
@@ -40,6 +41,9 @@ versionPrefix = void $ symbol "## "
 sectionPrefix :: Parser ()
 sectionPrefix = void $ symbol "### "
 
+sentencePrefix :: Parser ()
+sentencePrefix = void $ symbol "- "
+
 changelogName :: Parser String
 changelogName = lexeme $ namePrefix *> contentTill eol
 
@@ -48,4 +52,9 @@ changelogDesc = lexeme $ manyTill (choice [printChar, newline]) (lookAhead versi
 
 unreleasedVersion :: Parser Version
 unreleasedVersion = versionPrefix *> brackets (symbol "Unreleased") *> return Unreleased
+
+diffRecord :: Parser Diff
+diffRecord = Diff <$> version <*> content 
+  where version = brackets (many (alphaNumChar <|> char '.')) <* symbol ":"
+        content = contentTill (void eol <|> eof)
 
