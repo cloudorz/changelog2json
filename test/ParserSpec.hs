@@ -39,3 +39,9 @@ spec = do
               "## [Unreleased]  "
               `shouldBe`
               return Unreleased
+      it "parse [1.x.x]: abc568" $ do
+        parse diffRecord
+              "(undefined)"
+              "[1.x.x]: abc568"
+              `shouldBe`
+              return (Diff "1.x.x" "abc568")
