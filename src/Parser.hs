@@ -4,6 +4,7 @@ module Parser ( changelogName
               , diffRecord
               , changesEntry
               , sectionName
+              , section
               ) where
 
 import Data.Void
@@ -71,3 +72,7 @@ diffRecord = Diff <$> version <*> content
 
 changesEntry :: Parser String
 changesEntry = entryPrefix *> contentTill eoi
+
+section :: Parser Section
+section = Section <$> sectionName <*> manyTill changesEntry (lookAhead eoi)
+
