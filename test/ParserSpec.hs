@@ -73,4 +73,11 @@ spec = do
               "### Added\n"
               `shouldBe`
               return "Added"
+    describe "parse the whole section" $ do
+      it "parse '### Added\n- Better lives\n- better work'" $ do 
+        parse section
+              "(undefined)"
+              "### Added\n- Better lives\n- better work"
+              `shouldBe`
+              return (Section "Added" ["Better lives", "better work"])
 
