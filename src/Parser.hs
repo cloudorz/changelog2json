@@ -100,5 +100,5 @@ versionItem = Version <$> tag <*> date <*> yanked <*> sections
 
 changelogParser :: Parser Changelog
 changelogParser = Changelog <$> changelogName <*> changelogDesc <*> versionsParser <*> diffsParser
-  where versionsParser = many $ versionItem <|> unreleasedVersion
+  where versionsParser = many $ (try versionItem) <|> unreleasedVersion
         diffsParser = many diffRecord
