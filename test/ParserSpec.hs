@@ -80,4 +80,11 @@ spec = do
               "### Added\n- Better lives\n- better work"
               `shouldBe`
               return (Section "Added" ["Better lives", "better work"])
+    describe "parse the date String" $ do 
+      it "parse '2016-06-02'" $ do
+        parse dateString
+              "(undefined)"
+              "2016-06-02"
+              `shouldBe`
+              return "2016-06-02"
 
