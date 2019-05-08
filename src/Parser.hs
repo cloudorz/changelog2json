@@ -7,6 +7,7 @@ module Parser ( changelogName
               , section
               , dateString
               , versionItem
+              , changelogParser
               ) where
 
 import Data.Void
@@ -16,6 +17,7 @@ import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 import Types
 import Control.Monad.Combinators
+import Data.Functor
 
 type Parser = Parsec Void String
 
@@ -59,13 +61,13 @@ changelogName :: Parser String
 changelogName = nameVia namePrefix
 
 sectionName :: Parser String
-sectionName = nameVia sectionPrefix
+sectionName = lexeme $ sectionPrefix *> choice (string <$> ["Changed", "Added", "Fixed", "Removed"])
 
 changelogDesc :: Parser String
 changelogDesc = lexeme $ manyTill (choice [printChar, newline]) (lookAhead versionPrefix)
 
 unreleasedVersion :: Parser Version
-unreleasedVersion = versionPrefix *> brackets (string "Unreleased") *> return Unreleased
+unreleasedVersion = versionPrefix *> brackets (string "Unreleased") $> Unreleased
 
 verString :: Parser String
 verString = brackets (many (alphaNumChar <|> char '.'))
@@ -79,7 +81,7 @@ changesEntry :: Parser String
 changesEntry = entryPrefix *> contentTill eoi
 
 section :: Parser Section
-section = Section <$> sectionName <*> manyTill changesEntry (lookAhead eoi)
+section = Section <$> sectionName <*> manyTill changesEntry eoi
 
 dateString :: Parser String
 dateString = lexeme $ dateConstruct <$> year <*> sep <*> month <*> sep <*> day
@@ -93,6 +95,10 @@ versionItem :: Parser Version
 versionItem = Version <$> tag <*> date <*> yanked <*> sections
   where tag = versionPrefix *> verString
         date = symbol "-" *> dateString
-        yanked = ((brackets $ string "YANKED") *> return True) <|> return False
+        yanked = (brackets (string "YANKED") $> True) <|> return False
         sections = many section
 
+changelogParser :: Parser Changelog
+changelogParser = Changelog <$> changelogName <*> changelogDesc <*> versionsParser <*> diffsParser
+  where versionsParser = many $ versionItem <|> unreleasedVersion
+        diffsParser = many diffRecord

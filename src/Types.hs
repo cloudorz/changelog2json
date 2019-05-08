@@ -15,6 +15,7 @@ data Version = Unreleased | Version { version :: String
                                     } deriving (Show, Eq)
                          
 data Changelog = Changelog { head :: String
+                           , desc :: String
                            , versions :: [Version]
                            , diffs :: [Diff]
                            } deriving (Show, Eq)
