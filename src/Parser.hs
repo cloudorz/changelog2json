@@ -70,7 +70,7 @@ unreleasedVersion :: Parser Version
 unreleasedVersion = versionPrefix *> brackets (string "Unreleased") $> Unreleased
 
 verString :: Parser String
-verString = brackets (many (alphaNumChar <|> char '.'))
+verString = brackets (many $ choice [alphaNumChar, char '.'])
 
 diffRecord :: Parser Diff
 diffRecord = Diff <$> version <*> content 
