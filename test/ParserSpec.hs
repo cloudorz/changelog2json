@@ -60,3 +60,17 @@ spec = do
               "-   我是 content"
               `shouldBe`
               return "我是 content"
+    describe "parse section name" $ do
+      it "parse '### Added" $ do
+        parse sectionName
+              "(undefined)"
+              "### Added"
+              `shouldBe`
+              return "Added"
+      it "parse '### Added\n" $ do
+        parse sectionName
+              "(undefined)"
+              "### Added\n"
+              `shouldBe`
+              return "Added"
+
