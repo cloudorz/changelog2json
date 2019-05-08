@@ -155,4 +155,11 @@ spec = do
               "[1.0.0]: http\n[1.a.b]: http"
               `shouldBe`
               return (Diff "1.a.b" "http")
+    describe "parse the whole light changelog" $ do
+      it "should the whole light changelog" $ do
+        parse changelogParser
+              "(undefined)"
+              "# N\ndesc\n\nd2\n\n## [Unreleased]\n\n## [1.0.0] - 2018-08-08 \n### Added\n- a\n- b\n\n### Changed\n- a\n\n[1.a.b]: http"
+              `shouldBe`
+              return (Changelog "N" "desc\n\nd2\n\n" [Unreleased, Version "1.0.0" "2018-08-08" False [Section "Added" ["a", "b"], Section "Changed" ["a"]]] [Diff "1.a.b" "http"])
 
