@@ -112,4 +112,47 @@ spec = do
               "## [0.0.1] - 2014-08-09\n### Changed\n- change 1\n- change 2\n\n### Added  \n- change 3\n"
               `shouldBe`
               return (Version "0.0.1" "2014-08-09" False [Section "Changed" ["change 1", "change 2"], Section "Added" ["change 3"]])
+    describe "parsers integration" $ do
+      it "should integrates changelogName with changelogDesc" $ do
+        parse (changelogName *> changelogDesc)
+              "(undefined)"
+              "# Name\nd1\n\nd2\n\n## "
+              `shouldBe`
+              return "d1\n\nd2\n\n"
+      it "should integrates changelogDesc with unreleasedVersion" $ do
+        parse (changelogDesc *> unreleasedVersion)
+              "(undefined)"
+              "d1\n\nd2\n\n## [Unreleased]"
+              `shouldBe`
+              return Unreleased
+      it "should integrates changelogDesc with versionItem" $ do
+        parse (changelogDesc *> versionItem)
+              "(undefined)"
+              "d1\n\nd2\n\n## [1.0.0] - 2011-02-03 \n### Added\n- a\n- b\n\n### Changed\n- a\n- b"
+              `shouldBe`
+              return (Version "1.0.0" "2011-02-03" False [Section "Added" ["a", "b"], Section "Changed" ["a", "b"]])
+      it "should integrates changelogDesc with versionItem" $ do
+        parse (unreleasedVersion *> versionItem)
+              "(undefined)"
+              "## [Unreleased]\n\n## [1.0.0] - 2011-02-03 \n### Added\n- a\n- b\n\n### Changed\n- a\n- b"
+              `shouldBe`
+              return (Version "1.0.0" "2011-02-03" False [Section "Added" ["a", "b"], Section "Changed" ["a", "b"]])
+      it "should integrates versionItem with versionItem" $ do
+        parse (versionItem *> versionItem)
+              "(undefined)"
+              "## [1.0.0] - 2011-02-03 \n### Added\n- a\n- b\n\n### Changed\n- a\n- b\n\n## [1.0.0] - 2011-02-03 \n### Added\n- a\n- b\n\n### Changed\n- a\n- b"
+              `shouldBe`
+              return (Version "1.0.0" "2011-02-03" False [Section "Added" ["a", "b"], Section "Changed" ["a", "b"]])
+      it "should integrates versionItem with diff" $ do
+        parse (versionItem *> diffRecord)
+              "(undefined)"
+              "## [1.0.0] - 2011-02-03 \n### Added\n- a\n- b\n\n### Changed\n- a\n- b\n\n[1.a.b]: http"
+              `shouldBe`
+              return (Diff "1.a.b" "http")
+      it "should integrates diff with diff" $ do
+        parse (diffRecord *> diffRecord)
+              "(undefined)"
+              "[1.0.0]: http\n[1.a.b]: http"
+              `shouldBe`
+              return (Diff "1.a.b" "http")
 
