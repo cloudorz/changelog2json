@@ -87,4 +87,11 @@ spec = do
               "2016-06-02"
               `shouldBe`
               return "2016-06-02"
+    describe "parse version item" $ do
+      it "parse '## [0.0.1] - 2014-08-09\n### Changed\n- change 1\n- change 2'" $ do
+        parse versionItem
+              "(undefined)"
+              "## [0.0.1] - 2014-08-09\n### Changed\n- change 1\n- change 2"
+              `shouldBe`
+              return (Version "0.0.1" "2014-08-09" False [Section "Changed" ["change 1", "change 2"] ])
 
