@@ -3,6 +3,7 @@ module Parser ( changelogName
               , unreleasedVersion
               , diffRecord
               , changesEntry
+              , sectionName
               ) where
 
 import Data.Void
@@ -42,11 +43,20 @@ versionPrefix = void $ symbol "## "
 sectionPrefix :: Parser ()
 sectionPrefix = void $ symbol "### "
 
-sentencePrefix :: Parser ()
-sentencePrefix = void $ symbol "- "
+entryPrefix :: Parser ()
+entryPrefix = void $ symbol "- "
+
+eoi :: Parser ()
+eoi = void eol <|> eof
+
+nameVia :: Parser () -> Parser String
+nameVia prefix = lexeme $ prefix *> contentTill eoi
 
 changelogName :: Parser String
-changelogName = lexeme $ namePrefix *> contentTill eol
+changelogName = nameVia namePrefix
+
+sectionName :: Parser String
+sectionName = nameVia sectionPrefix
 
 changelogDesc :: Parser String
 changelogDesc = lexeme $ manyTill (choice [printChar, newline]) (lookAhead versionPrefix)
@@ -57,7 +67,7 @@ unreleasedVersion = versionPrefix *> brackets (symbol "Unreleased") *> return Un
 diffRecord :: Parser Diff
 diffRecord = Diff <$> version <*> content 
   where version = brackets (many (alphaNumChar <|> char '.')) <* symbol ":"
-        content = contentTill (void eol <|> eof)
+        content = contentTill eoi
 
 changesEntry :: Parser String
-changesEntry = symbol "-" *> contentTill (void eol <|> eof)
+changesEntry = entryPrefix *> contentTill eoi
