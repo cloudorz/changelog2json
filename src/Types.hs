@@ -10,7 +10,7 @@ data Section = Section { name :: String
                          
 data Version = Unreleased | Version { version :: String 
                                     , date :: String
-                                    , desc :: String
+                                    , yanked :: Bool
                                     , sections :: [Section]
                                     } deriving (Show, Eq)
                          

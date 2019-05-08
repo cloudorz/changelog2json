@@ -65,11 +65,14 @@ changelogDesc :: Parser String
 changelogDesc = lexeme $ manyTill (choice [printChar, newline]) (lookAhead versionPrefix)
 
 unreleasedVersion :: Parser Version
-unreleasedVersion = versionPrefix *> brackets (symbol "Unreleased") *> return Unreleased
+unreleasedVersion = versionPrefix *> brackets (string "Unreleased") *> return Unreleased
+
+verString :: Parser String
+verString = brackets (many (alphaNumChar <|> char '.'))
 
 diffRecord :: Parser Diff
 diffRecord = Diff <$> version <*> content 
-  where version = brackets (many (alphaNumChar <|> char '.')) <* symbol ":"
+  where version = verString <* symbol ":"
         content = contentTill eoi
 
 changesEntry :: Parser String
@@ -78,14 +81,18 @@ changesEntry = entryPrefix *> contentTill eoi
 section :: Parser Section
 section = Section <$> sectionName <*> manyTill changesEntry (lookAhead eoi)
 
-versionItem :: Parser Version
-versionItem = undefined
-
 dateString :: Parser String
-dateString = dateConstruct <$> year <*> sep <*> month <*> sep <*> day
+dateString = lexeme $ dateConstruct <$> year <*> sep <*> month <*> sep <*> day
   where dateConstruct y s1 m s2 d = y ++ s1 ++ m ++ s2 ++ d
         year = count 4 digitChar
         month = count 2 digitChar
         day = count 2 digitChar
         sep = string "-"
+
+versionItem :: Parser Version
+versionItem = Version <$> tag <*> date <*> yanked <*> sections
+  where tag = versionPrefix *> verString
+        date = symbol "-" *> dateString
+        yanked = ((brackets $ string "YANKED") *> return True) <|> return False
+        sections = many section
 
