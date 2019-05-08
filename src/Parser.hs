@@ -5,6 +5,8 @@ module Parser ( changelogName
               , changesEntry
               , sectionName
               , section
+              , dateString
+              , versionItem
               ) where
 
 import Data.Void
@@ -75,4 +77,15 @@ changesEntry = entryPrefix *> contentTill eoi
 
 section :: Parser Section
 section = Section <$> sectionName <*> manyTill changesEntry (lookAhead eoi)
+
+versionItem :: Parser Version
+versionItem = undefined
+
+dateString :: Parser String
+dateString = dateConstruct <$> year <*> sep <*> month <*> sep <*> day
+  where dateConstruct y s1 m s2 d = y ++ s1 ++ m ++ s2 ++ d
+        year = count 4 digitChar
+        month = count 2 digitChar
+        day = count 2 digitChar
+        sep = string "-"
 
