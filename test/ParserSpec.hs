@@ -20,6 +20,12 @@ spec = do
               "(undefined)" "# hello, 你好\n   k"
               `shouldBe` 
               return 'k'
+      it "cc" $ do 
+        parse (changelogName *> changelogDesc *> unreleasedVersion *> versionItem *> versionItem *> diffRecord) 
+              "(undefined)"
+              "# N\nhh\n=lll\n\n## [Unreleased]\n\n## [1.0.0] - 2007-06-20 [YANKED]\n### Added\n- up-to-date\n\n## [1.0.1] - 2008-06-20\n### Changed\n- hh\n\n[xxx]:adb"
+              `shouldBe`
+              return (Diff "xxx" "adb")--(Version "1.0.1" "2008-06-20" False [Section "Changed" ["hh"]])
     describe "parse changelog description " $ do 
       it "parse 'All notable changes is based \n\n second line \n 第三行 ## '" $ do 
         parse changelogDesc 
@@ -40,6 +46,12 @@ spec = do
               "## [Unreleased]  "
               `shouldBe`
               return Unreleased
+      it "should consume all the whitespace after ']'" $ do
+        parse (unreleasedVersion *> string "#")
+              "(undefined)"
+              "## [Unreleased]  \n\n#"
+              `shouldBe`
+              return "#"
     describe "parse diff link entry" $ do
       it "parse [1.x.x]: abc568" $ do
         parse diffRecord
@@ -88,10 +100,16 @@ spec = do
               `shouldBe`
               return "2016-06-02"
     describe "parse version item" $ do
-      it "parse '## [0.0.1] - 2014-08-09\n### Changed\n- change 1\n- change 2'" $ do
+      it "parse '## [0.0.1] - 2014-08-09\n### Changed\n- change 1\n- change 2\n'" $ do
         parse versionItem
               "(undefined)"
-              "## [0.0.1] - 2014-08-09\n### Changed\n- change 1\n- change 2"
+              "## [0.0.1] - 2014-08-09\n### Changed\n- change 1\n- change 2\n"
               `shouldBe`
               return (Version "0.0.1" "2014-08-09" False [Section "Changed" ["change 1", "change 2"] ])
+      it "parse '## [0.0.1] - 2014-08-09\n### Changed\n- change 1\n- change 2\n\n### Added  \n- change 3\n'" $ do
+        parse versionItem
+              "(undefined)"
+              "## [0.0.1] - 2014-08-09\n### Changed\n- change 1\n- change 2\n\n### Added  \n- change 3\n"
+              `shouldBe`
+              return (Version "0.0.1" "2014-08-09" False [Section "Changed" ["change 1", "change 2"], Section "Added" ["change 3"]])
 
