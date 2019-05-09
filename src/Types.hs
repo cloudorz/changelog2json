@@ -3,7 +3,9 @@ module Types where
 
 import GHC.Generics
 import Data.Aeson
-import Data.ByteString.Lazy.Char8 (unpack)
+import Data.Text (unpack)
+import Data.Text.Encoding (decodeUtf8)
+import Data.ByteString.Lazy.Char8 (toStrict)
 
 data Diff = Diff { tag :: String
                  , link :: String
@@ -35,5 +37,5 @@ instance ToJSON Version where
 instance ToJSON Changelog where
 
 changelog2json :: Changelog -> String
-changelog2json = unpack . encode
+changelog2json = unpack . decodeUtf8 . toStrict . encode
 
