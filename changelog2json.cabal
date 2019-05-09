@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ec8dff9d876eaa919bdb7413489b1dee11ec69501d530526949a80ef0bb9b178
+-- hash: 23b6e001a9ab65f364ce6e731a6d415f3aca662f8391a3e6767b1487c1e358ad
 
 name:           changelog2json
 version:        0.1.0.0
@@ -27,7 +27,7 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Changelog2json
       Parser
       Types
   other-modules:

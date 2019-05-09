@@ -1,4 +1,4 @@
-module Lib
+module Changelog2json
     ( someFunc
     ) where
 

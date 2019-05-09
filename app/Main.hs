@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import Changelog2json
 
 main :: IO ()
 main = someFunc
