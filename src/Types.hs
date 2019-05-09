@@ -1,9 +1,10 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Types where
 
 import GHC.Generics
 import Data.Aeson
-import Data.Text (unpack)
+import Data.Text (unpack, pack)
 import Data.Text.Encoding (decodeUtf8)
 import Data.ByteString.Lazy.Char8 (toStrict)
 import Data.Aeson.Encode.Pretty (encodePretty)
@@ -30,12 +31,20 @@ data Changelog = Changelog { head :: String
 
 -- JSON encode supports
 instance ToJSON Diff where
+  toJSON (Diff tag link) = object [pack tag .= link]
 
 instance ToJSON Section where
+  toJSON (Section name entries) = 
+    object ["type" .= name, "changes" .= entries]
 
 instance ToJSON Version where
+  toJSON Unreleased = String "Unreleased"
+  toJSON (Version version date yanked sections) = 
+    object ["version" .= version, "published_at" .= date, "yanked" .= yanked, "groups" .= sections]
 
 instance ToJSON Changelog where
+  toJSON (Changelog head desc versions diffs) = 
+    object ["framework_name" .= head, "description" .= desc, "versions" .= versions, "diffs" .= diffs]
 
 changelog2json :: Changelog -> String
 changelog2json = unpack . decodeUtf8 . toStrict . encode
