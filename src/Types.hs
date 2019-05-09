@@ -5,7 +5,7 @@ data Diff = Diff { tag :: String
                  } deriving (Show, Eq)
 
 data Section = Section { name :: String
-                       , changes :: [String]
+                       , entries :: [String]
                        } deriving (Show, Eq)
                          
 data Version = Unreleased | Version { version :: String 

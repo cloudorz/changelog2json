@@ -8,6 +8,7 @@ module Parser ( changelogName
               , dateString
               , versionItem
               , changelogParser
+              , Parser
               ) where
 
 import Data.Void
@@ -69,12 +70,12 @@ changelogDesc = lexeme $ manyTill (choice [printChar, newline]) (lookAhead versi
 unreleasedVersion :: Parser Version
 unreleasedVersion = versionPrefix *> brackets (string "Unreleased") $> Unreleased
 
-verString :: Parser String
-verString = brackets (many $ choice [alphaNumChar, char '.'])
+tagParser :: Parser String
+tagParser = brackets (many $ choice [alphaNumChar, char '.'])
 
 diffRecord :: Parser Diff
 diffRecord = Diff <$> version <*> content 
-  where version = verString <* symbol ":"
+  where version = tagParser <* symbol ":"
         content = contentTill eoi
 
 changesEntry :: Parser String
@@ -93,12 +94,12 @@ dateString = lexeme $ dateConstruct <$> year <*> sep <*> month <*> sep <*> day
 
 versionItem :: Parser Version
 versionItem = Version <$> tag <*> date <*> yanked <*> sections
-  where tag = versionPrefix *> verString
+  where tag = versionPrefix *> tagParser
         date = symbol "-" *> dateString
         yanked = (brackets (string "YANKED") $> True) <|> return False
         sections = many section
 
 changelogParser :: Parser Changelog
 changelogParser = Changelog <$> changelogName <*> changelogDesc <*> versionsParser <*> diffsParser
-  where versionsParser = many $ (try versionItem) <|> unreleasedVersion
+  where versionsParser = many $ try versionItem <|> unreleasedVersion
         diffsParser = many diffRecord
