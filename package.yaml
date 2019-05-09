@@ -27,6 +27,7 @@ dependencies:
 - parser-combinators
 - text
 - bytestring
+- aeson-pretty
 
 library:
   source-dirs: src
