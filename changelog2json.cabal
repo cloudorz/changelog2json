@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 653ea1185a7dce48bc2dc3c8cd8ad9513e434c68e9ce68b9a6c326353400d845
+-- hash: 5144434918835714112c04f3efe219a2d4f0a9a43d5bb39b753172a4294ffc85
 
 name:           changelog2json
 version:        0.1.0.0
@@ -40,6 +40,7 @@ library
     , bytestring
     , megaparsec
     , parser-combinators
+    , text
     , time
   default-language: Haskell2010
 
@@ -57,6 +58,7 @@ executable changelog2json-exe
     , changelog2json
     , megaparsec
     , parser-combinators
+    , text
     , time
   default-language: Haskell2010
 
@@ -77,5 +79,6 @@ test-suite changelog2json-test
     , hspec
     , megaparsec
     , parser-combinators
+    , text
     , time
   default-language: Haskell2010
