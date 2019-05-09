@@ -1,12 +1,12 @@
-module Parser ( changelogName
-              , changelogDesc
-              , unreleasedVersion
-              , diffRecord
-              , changesEntry
-              , sectionName
-              , section
-              , dateString
-              , versionItem
+module Parser ( nameParser
+              , descParser
+              , unreleasedVersionParser
+              , diffEntryParser
+              , entryParser
+              , sectionNameParser
+              , sectionParser
+              , dateParser
+              , versionParser
               , changelogParser
               , Parser
               ) where
@@ -58,48 +58,48 @@ eoi = void eol <|> eof
 nameVia :: Parser () -> Parser String
 nameVia prefix = lexeme $ prefix *> contentTill eoi
 
-changelogName :: Parser String
-changelogName = nameVia namePrefix
+nameParser :: Parser String
+nameParser = nameVia namePrefix
 
-sectionName :: Parser String
-sectionName = lexeme $ sectionPrefix *> choice (string <$> ["Changed", "Added", "Fixed", "Removed"])
+sectionNameParser :: Parser String
+sectionNameParser = lexeme $ sectionPrefix *> choice (string <$> ["Changed", "Added", "Fixed", "Removed"])
 
-changelogDesc :: Parser String
-changelogDesc = lexeme $ manyTill (choice [printChar, newline]) (lookAhead versionPrefix)
+descParser :: Parser String
+descParser = lexeme $ manyTill (choice [printChar, newline]) (lookAhead versionPrefix)
 
-unreleasedVersion :: Parser Version
-unreleasedVersion = versionPrefix *> brackets (string "Unreleased") $> Unreleased
+unreleasedVersionParser :: Parser Version
+unreleasedVersionParser = versionPrefix *> brackets (string "Unreleased") $> Unreleased
 
 tagParser :: Parser String
 tagParser = brackets (many $ choice [alphaNumChar, char '.'])
 
-diffRecord :: Parser Diff
-diffRecord = Diff <$> version <*> content 
+diffEntryParser :: Parser Diff
+diffEntryParser = Diff <$> version <*> content 
   where version = tagParser <* symbol ":"
         content = contentTill eoi
 
-changesEntry :: Parser String
-changesEntry = entryPrefix *> contentTill eoi
+entryParser :: Parser String
+entryParser = entryPrefix *> contentTill eoi
 
-section :: Parser Section
-section = Section <$> sectionName <*> manyTill changesEntry eoi
+sectionParser :: Parser Section
+sectionParser = Section <$> sectionNameParser <*> manyTill entryParser eoi
 
-dateString :: Parser String
-dateString = lexeme $ dateConstruct <$> year <*> sep <*> month <*> sep <*> day
+dateParser :: Parser String
+dateParser = lexeme $ dateConstruct <$> year <*> sep <*> month <*> sep <*> day
   where dateConstruct y s1 m s2 d = y ++ s1 ++ m ++ s2 ++ d
         year = count 4 digitChar
         month = count 2 digitChar
         day = count 2 digitChar
         sep = string "-"
 
-versionItem :: Parser Version
-versionItem = Version <$> tag <*> date <*> yanked <*> sections
+versionParser :: Parser Version
+versionParser = Version <$> tag <*> date <*> yanked <*> sections
   where tag = versionPrefix *> tagParser
-        date = symbol "-" *> dateString
+        date = symbol "-" *> dateParser
         yanked = (brackets (string "YANKED") $> True) <|> return False
-        sections = many section
+        sections = many sectionParser
 
 changelogParser :: Parser Changelog
-changelogParser = Changelog <$> changelogName <*> changelogDesc <*> versionsParser <*> diffsParser
-  where versionsParser = many $ try versionItem <|> unreleasedVersion
-        diffsParser = many diffRecord
+changelogParser = Changelog <$> nameParser <*> descParser <*> versionsParser <*> diffsParser
+  where versionsParser = many $ try versionParser <|> unreleasedVersionParser
+        diffsParser = many diffEntryParser
