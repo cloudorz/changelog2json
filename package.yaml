@@ -33,7 +33,7 @@ library:
   source-dirs: src
 
 executables:
-  changelog2json-exe:
+  changelog2json:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
