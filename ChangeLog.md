@@ -1,3 +1,3 @@
-# Changelog for changelog2json
+# changelog2json
 
-## Unreleased changes
+## [Unreleased]
