@@ -61,8 +61,10 @@ nameVia prefix = lexeme $ prefix *> contentTill eoi
 nameParser :: Parser String
 nameParser = nameVia namePrefix
 
+types = ["Changed", "Added", "Fixed", "Removed", "Deprecated", "Security"]
+
 sectionNameParser :: Parser String
-sectionNameParser = lexeme $ sectionPrefix *> choice (string <$> ["Changed", "Added", "Fixed", "Removed"])
+sectionNameParser = lexeme $ sectionPrefix *> choice (string <$> types)
 
 descParser :: Parser String
 descParser = lexeme $ manyTill (choice [printChar, newline]) (lookAhead versionPrefix)
