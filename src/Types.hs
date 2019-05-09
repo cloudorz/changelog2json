@@ -6,6 +6,7 @@ import Data.Aeson
 import Data.Text (unpack)
 import Data.Text.Encoding (decodeUtf8)
 import Data.ByteString.Lazy.Char8 (toStrict)
+import Data.Aeson.Encode.Pretty (encodePretty)
 
 data Diff = Diff { tag :: String
                  , link :: String
@@ -38,4 +39,7 @@ instance ToJSON Changelog where
 
 changelog2json :: Changelog -> String
 changelog2json = unpack . decodeUtf8 . toStrict . encode
+
+prettyC2J :: Changelog -> String
+prettyC2J = unpack . decodeUtf8 . toStrict . encodePretty
 

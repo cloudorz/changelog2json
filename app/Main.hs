@@ -3,5 +3,5 @@ module Main where
 import Changelog2json
 
 main :: IO ()
-main = interact changelogContent2json
+main = interact prettyCC2J
 
