@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 23b6e001a9ab65f364ce6e731a6d415f3aca662f8391a3e6767b1487c1e358ad
+-- hash: 653ea1185a7dce48bc2dc3c8cd8ad9513e434c68e9ce68b9a6c326353400d845
 
 name:           changelog2json
 version:        0.1.0.0
@@ -37,6 +37,7 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bytestring
     , megaparsec
     , parser-combinators
     , time
@@ -52,6 +53,7 @@ executable changelog2json-exe
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bytestring
     , changelog2json
     , megaparsec
     , parser-combinators
@@ -70,6 +72,7 @@ test-suite changelog2json-test
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bytestring
     , changelog2json
     , hspec
     , megaparsec
